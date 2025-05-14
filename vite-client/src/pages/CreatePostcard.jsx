@@ -1,8 +1,9 @@
 import { useState, useContext, useEffect } from "react";
 import { UserContext } from "../UserContext";
+import Warning from "../components/Warning";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 
 const ItemTypes = {
@@ -23,8 +24,8 @@ const DraggableText = ({ text, position, setPosition }) => {
       ref={drag}
       style={{
         opacity: isDragging ? 0.5 : 1,
-        cursor: 'move',
-        position: 'absolute',
+        cursor: "move",
+        position: "absolute",
         left: position.x,
         top: position.y,
       }}
@@ -34,14 +35,20 @@ const DraggableText = ({ text, position, setPosition }) => {
   );
 };
 
-const PostcardPreview = ({ title, description, setTitlePosition, setDescriptionPosition, frame }) => {
+const PostcardPreview = ({
+  title,
+  description,
+  setTitlePosition,
+  setDescriptionPosition,
+  frame,
+}) => {
   const [, drop] = useDrop(() => ({
     accept: ItemTypes.TEXT,
     drop: (item, monitor) => {
       const delta = monitor.getClientOffset();
       const dropPosition = {
         x: delta.x - 150, // Adjust based on the width of the text
-        y: delta.y - 50,  // Adjust based on the height of the text
+        y: delta.y - 50, // Adjust based on the height of the text
       };
 
       if (item.text === title.value) {
@@ -68,18 +75,22 @@ const PostcardPreview = ({ title, description, setTitlePosition, setDescriptionP
         <div
           className="absolute"
           style={{
-            borderTop: frame.type === "top-bottom" || frame.type === "full" 
-              ? `${frame.thickness}px solid ${frame.color || 'black'}` 
-              : 'none',
-            borderBottom: frame.type === "top-bottom" || frame.type === "full" 
-              ? `${frame.thickness}px solid ${frame.color || 'black'}` 
-              : 'none',
-            borderLeft: frame.type === "left-right" || frame.type === "full" 
-              ? `${frame.thickness}px solid ${frame.color || 'black'}` 
-              : 'none',
-            borderRight: frame.type === "left-right" || frame.type === "full" 
-              ? `${frame.thickness}px solid ${frame.color || 'black'}` 
-              : 'none',
+            borderTop:
+              frame.type === "top-bottom" || frame.type === "full"
+                ? `${frame.thickness}px solid ${frame.color || "black"}`
+                : "none",
+            borderBottom:
+              frame.type === "top-bottom" || frame.type === "full"
+                ? `${frame.thickness}px solid ${frame.color || "black"}`
+                : "none",
+            borderLeft:
+              frame.type === "left-right" || frame.type === "full"
+                ? `${frame.thickness}px solid ${frame.color || "black"}`
+                : "none",
+            borderRight:
+              frame.type === "left-right" || frame.type === "full"
+                ? `${frame.thickness}px solid ${frame.color || "black"}`
+                : "none",
             borderRadius: "8px",
             boxSizing: "border-box",
             inset: "0",
@@ -107,8 +118,16 @@ export default function CreatePostcardPage() {
   const [allUsers, setAllUsers] = useState([]);
   const [selectedRecipients, setSelectedRecipients] = useState([]);
   const [title, setTitle] = useState({ value: "", position: { x: 0, y: 0 } });
-  const [description, setDescription] = useState({ value: "", position: { x: 0, y: 0 } });
-  const [frame, setFrame] = useState({ type: "full", thickness: 1, color: "#000", image: null });
+  const [description, setDescription] = useState({
+    value: "",
+    position: { x: 0, y: 0 },
+  });
+  const [frame, setFrame] = useState({
+    type: "full",
+    thickness: 1,
+    color: "#000",
+    image: null,
+  });
   const [background, setBackground] = useState(null);
   const [audio, setAudio] = useState(null);
   const [error, setError] = useState(null);
@@ -127,8 +146,10 @@ export default function CreatePostcardPage() {
     fetchUsers();
   }, []);
 
-  const handleTitlePosition = (pos) => setTitle((prev) => ({ ...prev, position: pos }));
-  const handleDescriptionPosition = (pos) => setDescription((prev) => ({ ...prev, position: pos }));
+  const handleTitlePosition = (pos) =>
+    setTitle((prev) => ({ ...prev, position: pos }));
+  const handleDescriptionPosition = (pos) =>
+    setDescription((prev) => ({ ...prev, position: pos }));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -159,9 +180,50 @@ export default function CreatePostcardPage() {
   };
 
   const handleRecipientChange = (e) => {
-    const value = Array.from(e.target.selectedOptions, option => option.value);
+    const value = Array.from(
+      e.target.selectedOptions,
+      (option) => option.value
+    );
     setSelectedRecipients(value);
   };
+
+  if (!user) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen text-center">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={1.5}
+          stroke="currentColor"
+          className="w-24 h-24 text-primary animate-bounce mb-6"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z"
+          />
+        </svg>
+
+        <div className="w-full max-w-md px-4">
+          <Warning
+            message={
+              <>
+                To create cards you need to{" "}
+                <Link
+                  to="/login"
+                  className="underline text-white hover:text-gray-200"
+                >
+                  login
+                </Link>
+                !
+              </>
+            }
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <DndProvider backend={HTML5Backend}>
@@ -196,7 +258,9 @@ export default function CreatePostcardPage() {
               <label className="block mb-1">Description:</label>
               <textarea
                 value={description.value}
-                onChange={(e) => setDescription({ ...description, value: e.target.value })}
+                onChange={(e) =>
+                  setDescription({ ...description, value: e.target.value })
+                }
                 className="border p-2 w-full"
                 required
               />
@@ -239,7 +303,9 @@ export default function CreatePostcardPage() {
               <input
                 type="number"
                 value={frame.thickness}
-                onChange={(e) => setFrame({ ...frame, thickness: Number(e.target.value) })}
+                onChange={(e) =>
+                  setFrame({ ...frame, thickness: Number(e.target.value) })
+                }
                 className="border p-2 w-full"
                 required
               />
@@ -281,7 +347,9 @@ export default function CreatePostcardPage() {
 
             <button
               type="submit"
-              className={`primary ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
+              className={`primary ${
+                loading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
               disabled={loading}
             >
               {loading ? "Creating..." : "Create Postcard"}
