@@ -27,7 +27,10 @@ export default function Header() {
       <div className="flex gap-2 border border-gray-300 rounded-full py-2 px-4 shadow-md shadow-gray-500">
         <NavLink to={"/account/owned"}>my cards</NavLink>
         <div className="border border-l border-gray-300"></div>
-        <NavLink className="bg-primary text-white rounded-full overflow-hidden" to={"/postcard/create"}>
+        <NavLink
+          className="bg-primary text-white rounded-full overflow-hidden"
+          to={"/postcard/create"}
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
